@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Naïl Letty — Quantum Hardware</title>
+  <meta name="description" content="Portfolio of Naïl Letty — M1 ISAE-SUPAERO, quantum hardware, silicon photonics, UCF Q-Lab." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F8F8F6; --bg2: #EDEDEA; --navy: #1E3A5F; --copper: #BF8040;
+      --txt: #0F0F0E; --txt2: #5A5650; --txt3: #A09890; --bdr: #DCDAD4;
+      --serif: 'Playfair Display', Georgia, serif;
+      --sans: 'DM Sans', system-ui, sans-serif;
+      --mono: 'DM Mono', monospace;
+      --nav-h: 50px;
+      /* Fluid spacing scale */
+      --sp-xs: clamp(0.5rem, 1vw, 0.875rem);
+      --sp-sm: clamp(0.75rem, 1.5vw, 1.25rem);
+      --sp-md: clamp(1rem, 2vw, 1.75rem);
+      --sp-lg: clamp(1.5rem, 3vw, 2.5rem);
+      /* Fluid padding for content */
+      --pad-x: clamp(1.25rem, 5vw, 4rem);
+      --pad-y: clamp(1.25rem, 3vh, 2.5rem);
+    }
+
+    html, body { height: 100%; background: var(--bg); font-family: var(--sans); color: var(--txt); overflow: hidden; }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h);
+      background: var(--bg); border-bottom: 0.5px solid var(--bdr);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(0.75rem, 3vw, 2rem); z-index: 100; transition: box-shadow .4s;
+      gap: 0.5rem;
+    }
+    #nav.sh { box-shadow: 0 1px 20px rgba(0,0,0,.07); }
+    #pbar { position: absolute; bottom: -1px; left: 0; height: 1.5px; background: var(--copper); pointer-events: none; }
+    .logo { font-family: var(--serif); font-size: clamp(15px, 2vw, 20px); color: var(--txt); letter-spacing: -.01em; cursor: pointer; flex-shrink: 0; text-decoration: none; }
+
+    /* Nav links — scrollable on mobile, no scrollbar shown */
+    #nlinks {
+      display: flex; align-items: center; gap: 2px;
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none; flex: 1; min-width: 0;
+    }
+    #nlinks::-webkit-scrollbar { display: none; }
+    .nl {
+      font-size: clamp(10px, 1.2vw, 12px); color: var(--txt3); cursor: pointer;
+      padding: 4px clamp(6px, 1.2vw, 12px); border-radius: 20px;
+      transition: color .2s, background .2s; white-space: nowrap; user-select: none; flex-shrink: 0;
+    }
+    .nl.act { background: var(--navy); color: #fff; font-weight: 500; }
+    .nl:hover:not(.act) { background: var(--navy); color: #fff; }
+
+    .ltog { display: flex; background: var(--bg2); border-radius: 20px; padding: 3px; flex-shrink: 0; }
+    .lbtn { font-size: 10px; padding: 3px 10px; border-radius: 14px; cursor: pointer; font-family: var(--mono); color: var(--txt3); transition: all .2s; }
+    .lbtn.act { background: var(--navy); color: #fff; }
+    .lbtn:hover:not(.act) { background: var(--navy); color: #fff; }
+
+    /* ── DOTS ── */
+    #dots { position: fixed; right: clamp(6px, 1.5vw, 18px); top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 7px; z-index: 99; }
+    .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--bdr); cursor: pointer; transition: all .3s; }
+    .dot.act { background: var(--navy); transform: scale(1.6); }
+
+    /* ── SCROLLER ── */
+    #sc { position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0; overflow-y: scroll; }
+    #sc::-webkit-scrollbar { width: 3px; }
+    #sc::-webkit-scrollbar-thumb { background: var(--bdr); border-radius: 2px; }
+    #stg { position: sticky; top: 0; height: calc(100vh - var(--nav-h)); overflow: hidden; background: var(--bg); }
+
+    /* ── SECTIONS ── */
+    .sec { position: absolute; inset: 0; display: flex; flex-direction: column; will-change: transform, opacity; backface-visibility: hidden; }
+    .scw { padding: var(--pad-y) var(--pad-x); width: 100%; will-change: transform; }
+
+    /* ── FLUID TYPOGRAPHY ── */
+    .tag { font-size: clamp(8px, 1vw, 9px); letter-spacing: .15em; text-transform: uppercase; color: var(--copper); font-family: var(--mono); margin-bottom: var(--sp-sm); display: block; }
+    .ht { font-size: clamp(32px, 6vw, 68px); font-family: var(--serif); font-weight: 400; line-height: 1.0; color: var(--txt); margin-bottom: var(--sp-sm); }
+    .bs { font-size: clamp(11px, 1.3vw, 13px); color: var(--txt2); line-height: 1.78; max-width: 42ch; margin-bottom: var(--sp-md); }
+    .sn { font-size: clamp(8px, 1vw, 9px); font-family: var(--mono); color: var(--copper); letter-spacing: .15em; margin-bottom: var(--sp-md); display: flex; align-items: center; gap: .75rem; }
+    .sn::after { content: ''; flex: 1; height: 0.5px; background: var(--bdr); }
+
+    .bts { display: flex; gap: clamp(6px, 1.5vw, 10px); flex-wrap: wrap; align-items: center; }
+
+    /* ── HOME LAYOUT ── */
+    .hg { display: grid; grid-template-columns: 1fr clamp(100px, 15vw, 170px); gap: var(--sp-lg); align-items: center; }
+    .pp {
+      width: clamp(100px, 15vw, 170px);
+      height: clamp(128px, 19vw, 216px);
+      border-radius: 6px; background: var(--bg2); border: 0.5px solid var(--bdr);
+      overflow: hidden; flex-shrink: 0;
+    }
+    .pp img { width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block; }
+
+    /* ── ABOUT ── */
+    .ag { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-md); }
+    .ac { border-top: 1.5px solid var(--navy); padding-top: .75rem; }
+    .at { font-size: clamp(11px, 1.3vw, 13px); font-weight: 500; color: var(--txt); margin-bottom: 5px; }
+    .ab { font-size: clamp(10px, 1.1vw, 12px); color: var(--txt2); line-height: 1.65; }
+
+    /* ── EDUCATION ── */
+    .tl { display: flex; flex-direction: column; gap: var(--sp-md); }
+    .tr { display: grid; grid-template-columns: clamp(70px, 8vw, 90px) 1fr; gap: var(--sp-sm); }
+    .ty { font-size: clamp(9px, 1vw, 10px); font-family: var(--mono); color: var(--copper); padding-top: 2px; line-height: 1.6; }
+    .tc { border-left: 1.5px solid var(--navy); padding-left: clamp(0.75rem, 1.5vw, 1.25rem); }
+    .tt { font-size: clamp(11px, 1.3vw, 13px); font-weight: 500; color: var(--txt); margin-bottom: 3px; }
+    .tt a { color: inherit; text-decoration: none; border-bottom: 0.5px solid var(--bdr); transition: border-color .2s, color .2s; }
+    .tt a:hover { color: var(--navy); border-color: var(--navy); }
+    .ts { font-size: clamp(10px, 1.1vw, 12px); color: var(--txt2); line-height: 1.6; }
+
+    /* ── RESEARCH ── */
+    .rlab { display: flex; align-items: baseline; gap: .75rem; margin-bottom: .25rem; flex-wrap: wrap; }
+    .rh { font-size: clamp(13px, 1.5vw, 15px); font-family: var(--serif); color: var(--txt); }
+    .rh a { color: inherit; text-decoration: none; border-bottom: 0.5px solid var(--bdr); transition: color .2s, border-color .2s; }
+    .rh a:hover { color: var(--navy); border-color: var(--navy); }
+    .rsup { font-size: clamp(10px, 1.1vw, 11px); color: var(--txt3); }
+    .rsup a { color: var(--txt3); text-decoration: none; border-bottom: 0.5px solid var(--bdr); transition: color .2s, border-color .2s; }
+    .rsup a:hover { color: var(--navy); border-color: var(--navy); }
+    .rb { font-size: clamp(10px, 1.2vw, 12px); color: var(--txt2); line-height: 1.8; max-width: 60ch; margin: var(--sp-sm) 0 .625rem; }
+    .skills-label { font-size: clamp(8px, 1vw, 9px); letter-spacing: .12em; text-transform: uppercase; color: var(--txt3); font-family: var(--mono); margin-bottom: .5rem; }
+    .pls { display: flex; flex-wrap: wrap; gap: clamp(4px, 0.8vw, 6px); }
+    .pl { font-size: clamp(9px, 1vw, 10px); padding: 3px clamp(7px, 1.2vw, 11px); border-radius: 20px; font-family: var(--mono); }
+    .plh { background: #E4EEF7; color: var(--navy); border: 0.5px solid #B8CDE0; }
+    .pll { background: var(--bg2); color: var(--txt2); border: 0.5px solid var(--bdr); }
+
+    /* ── CERTIFICATIONS ── */
+    .cert-intro { font-size: clamp(10px, 1.2vw, 12px); color: var(--txt2); line-height: 1.75; margin-bottom: var(--sp-md); max-width: 60ch; }
+    .cert-groups { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); }
+    .cg-block { border-top: 1.5px solid var(--navy); padding-top: .875rem; }
+    .cg-title { font-size: clamp(8px, 1vw, 10px); letter-spacing: .12em; text-transform: uppercase; color: var(--navy); font-family: var(--mono); margin-bottom: .875rem; font-weight: 500; }
+    .cert-item { margin-bottom: .625rem; padding-bottom: .625rem; border-bottom: 0.5px solid var(--bdr); }
+    .cert-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .cert-name { font-size: clamp(10px, 1.1vw, 11px); font-weight: 500; color: var(--txt); margin-bottom: 2px; }
+    .cert-meta { font-size: clamp(9px, 1vw, 10px); color: var(--txt3); font-family: var(--mono); margin-bottom: 4px; }
+    .cert-skills { display: flex; flex-wrap: wrap; gap: 3px; }
+    .csp { font-size: clamp(8px, 0.9vw, 9px); padding: 2px 7px; border-radius: 10px; font-family: var(--mono); }
+    .csph { background: #E4EEF7; color: var(--navy); border: 0.5px solid #B8CDE0; }
+    .cspl { background: var(--bg2); color: var(--txt2); border: 0.5px solid var(--bdr); }
+
+    /* ── CONTACT ── */
+    .cgrid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-md); max-width: 520px; }
+    .ci { display: flex; flex-direction: column; gap: 4px; }
+    .cilabel { font-size: clamp(8px, 1vw, 9px); letter-spacing: .12em; text-transform: uppercase; color: var(--txt3); font-family: var(--mono); }
+    .cival { font-size: clamp(11px, 1.3vw, 13px); color: var(--navy); font-weight: 500; }
+    .cival a { color: inherit; text-decoration: none; border-bottom: 0.5px solid transparent; transition: border-color .2s; }
+    .cival a:hover { border-color: var(--navy); }
+    .cnote { font-size: clamp(10px, 1.2vw, 12px); color: var(--txt2); line-height: 1.75; max-width: 44ch; margin-top: var(--sp-md); }
+
+    /* ── TOAST ── */
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(50px); background: var(--navy); color: #fff; padding: 8px 20px; border-radius: 4px; font-size: 12px; font-family: var(--sans); opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 200; }
+    #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── RESPONSIVE BREAKPOINTS ── */
+    @media (max-width: 600px) {
+      :root { --nav-h: 46px; }
+      .hg { grid-template-columns: 1fr; }
+      .pp { display: none; } /* photo cachée sur très petit écran */
+      .ag { grid-template-columns: 1fr; }
+      .cert-groups { grid-template-columns: 1fr; }
+      .cgrid { grid-template-columns: 1fr; }
+      #dots { display: none; } /* dots cachés sur mobile */
+    }
+    @media (min-width: 601px) and (max-width: 900px) {
+      .hg { grid-template-columns: 1fr clamp(100px, 18vw, 140px); }
+      .ag { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="nav">
+  <div id="pbar"></div>
+  <span class="logo" id="navlogo">N·L</span>
+  <div id="nlinks">
+    <span class="nl act" data-i="0" data-en="Home"           data-fr="Accueil">Home</span>
+    <span class="nl"     data-i="1" data-en="About"          data-fr="À propos">About</span>
+    <span class="nl"     data-i="2" data-en="Education"      data-fr="Formation">Education</span>
+    <span class="nl"     data-i="3" data-en="Research"       data-fr="Recherche">Research</span>
+    <span class="nl"     data-i="4" data-en="Certifications" data-fr="Certifications">Certifications</span>
+    <span class="nl"     data-i="5" data-en="Contact"        data-fr="Contact">Contact</span>
+  </div>
+  <div class="ltog">
+    <span class="lbtn act" id="lEN">EN</span>
+    <span class="lbtn"     id="lFR">FR</span>
+  </div>
+</nav>
+
+<div id="dots"></div>
+
+<div id="sc">
+  <div id="stg">
+
+    <!-- HOME -->
+    <div class="sec" id="s0">
+      <div class="scw" id="cw0">
+        <div class="hg">
+          <div>
+            <span class="tag" data-en="M1 · ISAE-SUPAERO · UCF Q-Lab 2026" data-fr="M1 · ISAE-SUPAERO · UCF Q-Lab 2026">M1 · ISAE-SUPAERO · UCF Q-Lab 2026</span>
+            <h1 class="ht">Naïl<br>Letty</h1>
+            <p class="bs" data-en="Quantum hardware · Silicon photonics · Single-photon sources. Building toward scalable quantum networks." data-fr="Hardware quantique · Photonique silicium · Sources de photons uniques. Vers des réseaux quantiques scalables.">Quantum hardware · Silicon photonics · Single-photon sources. Building toward scalable quantum networks.</p>
+            <div class="bts">
+              <a id="btn-cv-home" href="LETTY_Nail_CV.pdf" target="_blank" rel="noopener" data-en="Download CV" data-fr="Télécharger le CV">Download CV</a>
+              <button id="btn-contact" data-en="Get in touch" data-fr="Me contacter">Get in touch</button>
+            </div>
+          </div>
+          <div class="pp">
+            <img src="photo.jpg" alt="Naïl Letty" loading="eager" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="sec" id="s1">
+      <div class="scw" id="cw1">
+        <span class="sn" data-en="02 · About" data-fr="02 · À propos">02 · About</span>
+        <div class="ag">
+          <div class="ac">
+            <p class="at" data-en="Curiosity & drive" data-fr="Curiosité & engagement">Curiosity & drive</p>
+            <p class="ab" data-en="When something interests me, I go all in. It started with quantum mechanics and statistical physics at ISAE-SUPAERO, then laser physics and quantum engineering. Outside class, I kept going: IBM certifications, quantum optics, semiconductor devices. Each one pulled me a step further." data-fr="Quand quelque chose m'intéresse, j'y vais à fond. Ça a commencé par la méca Q et la physique stat à ISAE-SUPAERO, puis la physique laser et l'ingénierie quantique. En dehors des cours : IBM, optique quantique, semi-conducteurs.">When something interests me, I go all in. It started with quantum mechanics and statistical physics at ISAE-SUPAERO, then laser physics and quantum engineering. Outside class, I kept going: IBM certifications, quantum optics, semiconductor devices. Each one pulled me a step further.</p>
+          </div>
+          <div class="ac">
+            <p class="at" data-en="Sports" data-fr="Sports">Sports</p>
+            <p class="ab" data-en="Five years of competitive climbing, four years of volleyball. Climbing taught me to stay calm when things get hard. Volleyball gave me a taste for the collective, for the kind of trust you build with a team over time." data-fr="Cinq ans d'escalade en compétition, quatre ans de volley. L'escalade m'a appris à garder la tête froide. Le volley m'a donné le goût du collectif et de la confiance qui se construit dans une équipe.">Five years of competitive climbing, four years of volleyball. Climbing taught me to stay calm when things get hard. Volleyball gave me a taste for the collective, for the kind of trust you build with a team over time.</p>
+          </div>
+          <div class="ac">
+            <p class="at" data-en="International profile" data-fr="Profil international">International profile</p>
+            <p class="ab" data-en="French and Moroccan by upbringing, English by practice. Growing up between two languages and two cultural frameworks developed a natural ease with unfamiliar environments, something I'll put to use during six months of research in the US." data-fr="Français et marocain par l'éducation, anglais par la pratique. Grandir entre deux langues et deux cadres culturels a développé une aisance naturelle dans les environnements nouveaux, que je mettrai à profit lors de six mois de recherche aux États-Unis.">French and Moroccan by upbringing, English by practice. Growing up between two languages and two cultural frameworks developed a natural ease with unfamiliar environments, something I'll put to use during six months of research in the US.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDUCATION -->
+    <div class="sec" id="s2">
+      <div class="scw" id="cw2">
+        <span class="sn" data-en="03 · Education" data-fr="03 · Formation">03 · Education</span>
+        <div class="tl">
+          <div class="tr">
+            <span class="ty">2024 → now</span>
+            <div class="tc">
+              <p class="tt"><a href="https://www.isae-supaero.fr" target="_blank" rel="noopener" data-en="ISAE-SUPAERO, Toulouse — MEng" data-fr="ISAE-SUPAERO, Toulouse — Diplôme d'ingénieur">ISAE-SUPAERO, Toulouse — MEng</a></p>
+              <p class="ts" data-en="Aerospace engineering. Progressive specialization toward quantum hardware and photonics. 6-month research internship at UCF Q-Lab detailed in the Research section." data-fr="Ingénierie aérospatiale. Spécialisation progressive vers le hardware quantique et la photonique. Stage de recherche de 6 mois au UCF Q-Lab présenté dans la section Recherche.">Aerospace engineering. Progressive specialization toward quantum hardware and photonics. 6-month research internship at UCF Q-Lab detailed in the Research section.</p>
+            </div>
+          </div>
+          <div class="tr">
+            <span class="ty">2022 – 2024</span>
+            <div class="tc">
+              <p class="tt"><a href="https://www.site.ac-aix-marseille.fr/lyc-thiers/spip/" target="_blank" rel="noopener">Lycée Thiers, Marseille — CPGE</a></p>
+              <p class="ts" data-en="PCSI then PSI* (top-track class). Ranked 106th at the Mines-Ponts competitive entrance exam. Prépa teaches you how to work when the material is hard and the pace is fast." data-fr="PCSI puis PSI* (classe étoile). Classé 106ème au concours Mines-Ponts. La prépa apprend à travailler quand le sujet est dur et que le rythme est soutenu.">PCSI then PSI* (top-track class). Ranked 106th at the Mines-Ponts competitive entrance exam. Prépa teaches you how to work when the material is hard and the pace is fast.</p>
+            </div>
+          </div>
+          <div class="tr">
+            <span class="ty">2019 – 2022</span>
+            <div class="tc">
+              <p class="tt"><a href="https://www.terre.defense.gouv.fr/lycee-militaire-aix" target="_blank" rel="noopener">Lycée Militaire d'Aix-en-Provence</a></p>
+              <p class="ts" data-en="Baccalauréat · Physics, Mathematics, Advanced Mathematics. Graduated with highest honours (18.24/20, félicitations du jury). The military environment built an early habit of discipline and self-organisation." data-fr="Baccalauréat · Spécialités physique, mathématiques, option maths expertes. Obtenu avec félicitations du jury (18.24/20). L'environnement militaire a forgé tôt discipline et organisation.">Baccalauréat · Physics, Mathematics, Advanced Mathematics. Graduated with highest honours (18.24/20, félicitations du jury). The military environment built an early habit of discipline and self-organisation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div class="sec" id="s3">
+      <div class="scw" id="cw3">
+        <span class="sn" data-en="04 · Research — UCF Q-Lab, May – Oct 2026" data-fr="04 · Recherche — UCF Q-Lab, Mai – Oct 2026">04 · Research — UCF Q-Lab, May – Oct 2026</span>
+        <div class="rlab">
+          <span class="rh"><a href="https://www.ece.ucf.edu/Q-Lab/" target="_blank" rel="noopener">UCF Quantum Devices Laboratory</a></span>
+          <span class="rsup" data-en="· Supervised by" data-fr="· Encadré par">· Supervised by</span>
+          <span class="rsup"><a href="https://www.cecs.ucf.edu/faculty/wayesh-qarony/" target="_blank" rel="noopener">Dr Wayesh Qarony</a></span>
+        </div>
+        <p class="rb" data-en="Deterministic generation and optical characterization of novel silicon color centers acting as single-photon emitters in the telecom band. These silicon-based spin-photon qubits are integrated into nanophotonic structures on SOI and studied as building blocks for scalable on-chip quantum computing and long-distance quantum networking. Experimental work includes g²(τ) measurements, Hanbury Brown–Twiss interferometry, Hong-Ou-Mandel interference experiments, and data analysis combining results with supporting simulations." data-fr="Génération déterministe et caractérisation optique de nouveaux centres colorés dans le silicium, agissant comme émetteurs de photons uniques dans la bande télécom. Ces qubits spin-photon sont intégrés dans des structures nanophotoniques sur SOI. Travaux expérimentaux : mesures g²(τ), interférométrie HBT, expériences Hong-Ou-Mandel et analyse de données.">Deterministic generation and optical characterization of novel silicon color centers acting as single-photon emitters in the telecom band. These silicon-based spin-photon qubits are integrated into nanophotonic structures on SOI and studied as building blocks for scalable on-chip quantum computing and long-distance quantum networking. Experimental work includes g²(τ) measurements, Hanbury Brown–Twiss interferometry, Hong-Ou-Mandel interference experiments, and data analysis combining results with supporting simulations.</p>
+        <p class="skills-label" data-en="Skills" data-fr="Compétences">Skills</p>
+        <div class="pls">
+          <span class="pl plh">Single-photon characterization</span><span class="pl plh">HBT interferometry</span><span class="pl plh">g²(τ) measurements</span><span class="pl plh">Hong-Ou-Mandel</span><span class="pl plh">Fiber-based photonic setups</span><span class="pl plh">Data analysis & simulation</span><span class="pl pll">Silicon color centers</span><span class="pl pll">Nanophotonic structures</span><span class="pl pll">Telecom-band photonics</span><span class="pl pll">Spin-photon qubits</span><span class="pl pll">Photon indistinguishability</span><span class="pl pll">Quantum networking</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CERTIFICATIONS -->
+    <div class="sec" id="s4">
+      <div class="scw" id="cw4">
+        <span class="sn" data-en="05 · Certifications & Online Learning" data-fr="05 · Certifications & Formation en ligne">05 · Certifications & Online Learning</span>
+        <p class="cert-intro" data-en="All completed on personal time, alongside engineering studies at ISAE-SUPAERO. Starting Aug. 2025, this represents over 250 hours of self-directed study: quantum computing theory, quantum optics, semiconductor physics, nanophotonics, and hardware fabrication." data-fr="Toutes réalisées sur mon temps personnel, en parallèle des études d'ingénieur à ISAE-SUPAERO. Depuis août 2025, plus de 250 heures d'apprentissage autonome : théorie du calcul quantique, optique quantique, physique des semi-conducteurs, nanophotonique et fabrication hardware.">All completed on personal time, alongside engineering studies at ISAE-SUPAERO. Starting Aug. 2025, this represents over 250 hours of self-directed study: quantum computing theory, quantum optics, semiconductor physics, nanophotonics, and hardware fabrication.</p>
+        <div class="cert-groups">
+          <div class="cg-block">
+            <p class="cg-title" data-en="Quantum Optics & Photonics" data-fr="Optique Quantique & Photonique">Quantum Optics & Photonics</p>
+            <div class="cert-item"><p class="cert-name">Mécanique Quantique</p><p class="cert-meta">École Polytechnique · Mar. 2026 · ~30h</p><div class="cert-skills"><span class="csp csph">Quantum formalism</span><span class="csp csph">State spaces</span><span class="csp cspl">Mathematical physics</span></div></div>
+            <div class="cert-item"><p class="cert-name">Quantum Optics 2: Two Photons and More</p><p class="cert-meta">École Polytechnique · Dec. 2025 · ~30h</p><div class="cert-skills"><span class="csp csph">Entangled photons</span><span class="csp csph">Quantum teleportation</span><span class="csp cspl">Squeezed states</span><span class="csp cspl">Quantum cryptography</span></div></div>
+            <div class="cert-item"><p class="cert-name">Optique Non-linéaire</p><p class="cert-meta">École Polytechnique · Dec. 2025 · ~20h</p><div class="cert-skills"><span class="csp csph">Nonlinear optics</span><span class="csp cspl">Parametric processes</span><span class="csp cspl">Numerical simulation</span></div></div>
+            <div class="cert-item"><p class="cert-name">Quantum Optics 1: Single Photons</p><p class="cert-meta">École Polytechnique · Nov. 2025 · ~35h</p><div class="cert-skills"><span class="csp csph">Light quantization</span><span class="csp csph">Wave-particle duality</span><span class="csp csph">Single-photon sources</span><span class="csp cspl">Photodetection formalism</span></div></div>
+          </div>
+          <div class="cg-block">
+            <p class="cg-title" data-en="Semiconductor & Hardware" data-fr="Semi-conducteurs & Hardware">Semiconductor & Hardware</p>
+            <div class="cert-item"><p class="cert-name">Active Optical Devices Specialization</p><p class="cert-meta">University of Colorado Boulder · Feb. 2026 · ~50h</p><div class="cert-skills"><span class="csp csph">LED & semiconductor lasers</span><span class="csp csph">Nanophotonics & detectors</span><span class="csp cspl">Optoelectronics</span></div></div>
+            <div class="cert-item"><p class="cert-name">Semiconductor Devices Specialization</p><p class="cert-meta">University of Colorado Boulder · Feb. 2026 · ~45h</p><div class="cert-skills"><span class="csp csph">Semiconductor physics</span><span class="csp csph">pn junctions</span><span class="csp cspl">MOSFETs / BJTs</span><span class="csp cspl">Band theory</span></div></div>
+            <div class="cert-item"><p class="cert-name">Cleanroom Fundamentals & Semiconductor Technologies</p><p class="cert-meta">University at Buffalo · Feb. 2026 · ~12h</p><div class="cert-skills"><span class="csp csph">Cleanroom processes</span><span class="csp cspl">Microfabrication</span><span class="csp cspl">Materials science</span></div></div>
+          </div>
+          <div class="cg-block">
+            <p class="cg-title" data-en="Quantum Computing — IBM" data-fr="Calcul Quantique — IBM">Quantum Computing — IBM</p>
+            <div class="cert-item"><p class="cert-name">Quantum Machine Learning</p><p class="cert-meta">IBM · Oct. 2025 · ~10h</p><div class="cert-skills"><span class="csp csph">QML</span><span class="csp csph">VQC</span><span class="csp cspl">Supervised / unsupervised</span></div></div>
+            <div class="cert-item"><p class="cert-name">Variational Algorithms Design + VQE</p><p class="cert-meta">IBM · Sep.–Oct. 2025 · ~16h</p><div class="cert-skills"><span class="csp csph">VQE</span><span class="csp csph">VQD</span><span class="csp cspl">Hybrid algorithms</span><span class="csp cspl">Quantum chemistry</span></div></div>
+            <div class="cert-item"><p class="cert-name">Quantum Diagonalization Algorithms</p><p class="cert-meta">IBM · Sep. 2025 · ~8h</p><div class="cert-skills"><span class="csp csph">KQD / SKQD / SQD</span><span class="csp cspl">Hybrid classical-quantum</span></div></div>
+            <div class="cert-item"><p class="cert-name">Basics of QI + Fundamentals of QA</p><p class="cert-meta">IBM · Aug.–Sep. 2025 · ~18h</p><div class="cert-skills"><span class="csp csph">Quantum circuits</span><span class="csp csph">Entanglement</span><span class="csp cspl">Shor / Grover</span></div></div>
+          </div>
+          <div class="cg-block">
+            <p class="cg-title" data-en="Programming & Qiskit" data-fr="Programmation & Qiskit">Programming & Qiskit</p>
+            <div class="cert-item"><p class="cert-name">Quantum Computing with Qiskit & Advanced Algorithms</p><p class="cert-meta">Packt · Oct. 2025 · ~10h</p><div class="cert-skills"><span class="csp csph">Qiskit</span><span class="csp csph">Quantum circuits (code)</span><span class="csp cspl">Linear algebra</span></div></div>
+            <div class="cert-item"><p class="cert-name">Python Programming for Quantum Computing</p><p class="cert-meta">Packt · Oct. 2025 · ~10h</p><div class="cert-skills"><span class="csp csph">Python</span><span class="csp csph">Jupyter</span><span class="csp cspl">Data manipulation</span></div></div>
+            <div class="cert-item"><p class="cert-name">Python Basic + Java Basic</p><p class="cert-meta">HackerRank · Nov. 2025 · ~6h</p><div class="cert-skills"><span class="csp csph">Python</span><span class="csp csph">Java</span></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="sec" id="s5">
+      <div class="scw" id="cw5">
+        <span class="sn" data-en="06 · Contact" data-fr="06 · Contact">06 · Contact</span>
+        <p style="font-size:clamp(14px,1.8vw,18px);font-family:var(--serif);color:var(--txt);margin-bottom:var(--sp-md)" data-en="Let's connect." data-fr="Prenons contact.">Let's connect.</p>
+        <div class="cgrid">
+          <div class="ci"><span class="cilabel">Email</span><span class="cival"><a href="mailto:nail.letty@gmail.com">nail.letty@gmail.com</a></span></div>
+          <div class="ci"><span class="cilabel">LinkedIn</span><span class="cival"><a href="https://www.linkedin.com/in/nail-letty" target="_blank" rel="noopener">linkedin.com/in/nail-letty</a></span></div>
+          <div class="ci"><span class="cilabel">GitHub</span><span class="cival"><a href="https://github.com/lettynail" target="_blank" rel="noopener">github.com/lettynail</a></span></div>
+          <div class="ci"><span class="cilabel" data-en="Location" data-fr="Localisation">Location</span><span class="cival" style="color:var(--txt2)">Orlando, FL · Toulouse, FR</span></div>
+        </div>
+        <p class="cnote" data-en="Open to research collaborations, internship opportunities, and M2 programs in quantum hardware and photonics." data-fr="Ouvert aux collaborations de recherche, opportunités de stage, et candidatures M2 en hardware quantique et photonique.">Open to research collaborations, internship opportunities, and M2 programs in quantum hardware and photonics.</p>
+        <div class="bts" style="margin-top:var(--sp-md)">
+          <a id="btn-cv-contact" href="LETTY_Nail_CV.pdf" target="_blank" rel="noopener" data-en="Download CV" data-fr="Télécharger le CV">Download CV</a>
+          <a id="btn-mail" href="mailto:nail.letty@gmail.com?subject=Contact — Portfolio" data-en="Send email" data-fr="Envoyer un email">Send email</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /stg -->
+  <div id="spacer"></div>
+</div><!-- /sc -->
+
+<div id="toast"></div>
+
+<script>
+(function () {
+
+/* ── BOUTONS : styles inline forcés ── */
+const NAVY   = '#1E3A5F';
+const WHITE  = '#ffffff';
+const TRANSP = 'transparent';
+const BTN_STYLE = {
+  display: 'inline-block', padding: '9px 22px',
+  fontSize: '12px', fontFamily: "'DM Sans', system-ui, sans-serif",
+  fontWeight: '400', lineHeight: '1.4', letterSpacing: '0px',
+  border: '1.5px solid ' + NAVY, borderRadius: '4px',
+  cursor: 'pointer', outline: 'none', textDecoration: 'none',
+  verticalAlign: 'middle', whiteSpace: 'nowrap',
+  boxSizing: 'border-box', WebkitAppearance: 'none', appearance: 'none',
+  background: TRANSP, color: NAVY,
+};
+const BTN_IDS = ['btn-cv-home','btn-contact','btn-cv-contact','btn-mail'];
+function applyBtn(el) { Object.entries(BTN_STYLE).forEach(([k,v]) => { el.style[k] = v; }); }
+function wireBtn(el) {
+  applyBtn(el);
+  el.addEventListener('mouseenter', function() { this.style.background=NAVY; this.style.color=WHITE; this.style.borderColor=NAVY; });
+  el.addEventListener('mouseleave', function() { this.style.background=TRANSP; this.style.color=NAVY; this.style.borderColor=NAVY; });
+}
+
+/* ── CONFIG ── */
+const N = 6;
+const DIRS = [-1, 1, -1, 1, -1, 1];
+const DRIFT = 100;
+let lang = 'EN';
+
+const sc    = document.getElementById('sc');
+const nav   = document.getElementById('nav');
+const pbar  = document.getElementById('pbar');
+const dtsEl = document.getElementById('dots');
+const secs  = Array.from({length:N}, (_,i) => document.getElementById('s'+i));
+const cws   = Array.from({length:N}, (_,i) => document.getElementById('cw'+i));
+const nlEls = Array.from(document.querySelectorAll('#nlinks .nl'));
+
+let stLen = [], offsets = [];
+document.getElementById('spacer').style.height = '10px';
+
+/* Build dots */
+secs.forEach((_,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' act':'');
+  dtsEl.appendChild(d);
+});
+const dots = Array.from(dtsEl.children);
+
+function getNavH() {
+  return parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 50;
+}
+function getSH() { return window.innerHeight - getNavH(); }
+
+function measure() {
+  const SH = getSH();
+  stLen = cws.map(cw => Math.max(0, cw.scrollHeight - SH));
+  offsets = []; let cum = 0;
+  for (let i=0; i<N; i++) { offsets.push(cum); cum += stLen[i] + (i<N-1 ? SH : 0); }
+  document.getElementById('spacer').style.height = (cum + SH) + 'px';
+  secs.forEach((sec,i) => { sec.style.justifyContent = stLen[i]>0 ? 'flex-start' : 'center'; });
+  nlEls.forEach((l,i) => { l.onclick = e => { e.stopPropagation(); smoothTo(offsets[i]); }; });
+  dots.forEach((d,i) => { d.onclick = () => smoothTo(offsets[i]); });
+}
+
+window.addEventListener('resize', () => { measure(); update(); });
+
+document.getElementById('navlogo').addEventListener('click', () => smoothTo(0));
+document.getElementById('btn-contact').addEventListener('click', () => smoothTo(offsets[5]||0));
+
+function setLang(l) {
+  lang = l;
+  document.documentElement.lang = l==='EN' ? 'en' : 'fr';
+  document.getElementById('lEN').classList.toggle('act', l==='EN');
+  document.getElementById('lFR').classList.toggle('act', l==='FR');
+  document.querySelectorAll('[data-en]').forEach(el => {
+    const v = l==='EN' ? el.dataset.en : el.dataset.fr;
+    if (v !== undefined) el.textContent = v;
+  });
+  BTN_IDS.forEach(id => { const el=document.getElementById(id); if(el) applyBtn(el); });
+}
+document.getElementById('lEN').addEventListener('click', () => setLang('EN'));
+document.getElementById('lFR').addEventListener('click', () => setLang('FR'));
+
+function ease(t) { return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+function smoothTo(target) {
+  const s = sc.scrollTop, delta = target-s;
+  if (!delta) return;
+  const dur = 580, t0 = performance.now();
+  (function step(ts) {
+    const p = Math.min(1, (ts-t0)/dur);
+    const e = p<.5 ? 2*p*p : -1+(4-2*p)*p;
+    sc.scrollTop = s + delta*e;
+    if (p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
+
+function setActive(i) {
+  nlEls.forEach((l,j) => l.classList.toggle('act', j===i));
+  dots.forEach((d,j)  => d.classList.toggle('act', j===i));
+}
+
+function totalLen() {
+  const SH = getSH(); let t=0;
+  for (let i=0; i<N; i++) t += stLen[i] + (i<N-1 ? SH : 0);
+  return t;
+}
+
+function update() {
+  const SH = getSH(), st = sc.scrollTop;
+  let idx=0; for (let i=N-1; i>=0; i--) { if (st>=offsets[i]) { idx=i; break; } }
+  const localSt = st - offsets[idx];
+  const sl = stLen[idx];
+  let cfrac=0, contentSt=0;
+  if (idx < N-1) {
+    if (localSt <= sl) { cfrac=0; contentSt=localSt; }
+    else { cfrac=Math.min(1,(localSt-sl)/SH); contentSt=sl; }
+  } else { cfrac=0; contentSt=Math.min(localSt,sl); }
+  const cef = ease(cfrac);
+  const cfrom = idx;
+  const tl = totalLen();
+  pbar.style.width = (tl>0 ? Math.min(1,st/tl)*100 : 0) + '%';
+  nav.classList.toggle('sh', st>8);
+  setActive(cfrac>.5 ? Math.min(cfrom+1,N-1) : cfrom);
+  secs.forEach((sec,i) => {
+    let ty, op, zi;
+    if      (i===cfrom)   { ty=0;            op=1-cef; zi=1; }
+    else if (i===cfrom+1) { ty=(1-cef)*100;  op=cef;   zi=2; }
+    else if (i<cfrom)     { ty=0;            op=0;     zi=0; }
+    else                  { ty=100;          op=0;     zi=0; }
+    sec.style.transform = 'translateY('+ty+'%)';
+    sec.style.opacity   = op;
+    sec.style.zIndex    = zi;
+  });
+  cws.forEach((cw,i) => {
+    const d = DIRS[i]; let cx=0, cy=0;
+    if      (i===cfrom)            { cx=d*DRIFT*cef;      cy=-contentSt; }
+    else if (i===cfrom+1&&cef>0)   { cx=d*DRIFT*(1-cef);  cy=0; }
+    else                           { cx=d*DRIFT;           cy=0; }
+    cw.style.transform = 'translateX('+cx+'px) translateY('+cy+'px)';
+  });
+}
+
+sc.addEventListener('scroll', update, {passive:true});
+
+requestAnimationFrame(() => {
+  measure();
+  update();
+  BTN_IDS.forEach(id => { const el=document.getElementById(id); if(el) wireBtn(el); });
+});
+
+})();
+</script>
+</body>
+</html>
